@@ -29,7 +29,7 @@ export default function Projects() {
           <div>
             <div className="flex items-center gap-2 font-mono text-xs text-neon-cyan">
               <span className="h-2 w-2 rounded-full bg-neon-cyan shadow-[0_0_8px_#00f0ff]" />
-              <span className="tracking-widest uppercase">// REPOSITORY DATABASE</span>
+              <span className="tracking-widest uppercase"> REPOSITORY DATABASE</span>
             </div>
             <h2 className="mt-3 text-3xl font-extrabold text-white md:text-5xl">
               Complete Project{' '}
@@ -80,7 +80,7 @@ export default function Projects() {
                   <div>
                     <div className="mb-2 flex items-baseline gap-4">
                       <p className="font-mono text-xs text-neon-cyan">{p.path}</p>
-                      <span className="font-mono text-[10px] text-fog/60">DEPLOYED // LIVE</span>
+                      <span className="font-mono text-[10px] text-fog/60">DEPLOYED LIVE</span>
                     </div>
 
                     <h3 className="mb-3 text-xl font-bold text-white transition-colors group-hover:text-neon-cyan md:text-2xl">

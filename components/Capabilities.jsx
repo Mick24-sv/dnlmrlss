@@ -13,7 +13,7 @@ export default function Capabilities() {
         <div className="mb-14 max-w-3xl">
           <div className="flex items-center gap-2 font-mono text-xs text-neon-green">
             <span className="h-2 w-2 rounded-full bg-neon-green shadow-[0_0_8px_#00ff9d]" />
-            <span className="tracking-widest uppercase">// SYSTEM MODULES & CAPABILITIES</span>
+            <span className="tracking-widest uppercase">SYSTEM MODULES & CAPABILITIES</span>
           </div>
           <h2 className="mt-3 text-3xl font-extrabold text-white md:text-5xl">
             Engineering{' '}

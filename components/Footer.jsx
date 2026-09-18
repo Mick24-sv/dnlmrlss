@@ -16,22 +16,22 @@ export default function Footer() {
 
         <div className="flex flex-wrap items-center gap-6 font-mono text-xs text-fog">
           <a href="#top" className="transition-colors hover:text-neon-cyan">
-            // TOP
+             TOP
           </a>
           <a href="#featured" className="transition-colors hover:text-neon-cyan">
-            // WORK
+             WORK
           </a>
           <a href="#about" className="transition-colors hover:text-neon-cyan">
-            // ABOUT
+             ABOUT
           </a>
           <a href="#capabilities" className="transition-colors hover:text-neon-cyan">
-            // SKILLS
+             SKILLS
           </a>
           <a href="#work" className="transition-colors hover:text-neon-cyan">
-            // ARCHIVE
+             ARCHIVE
           </a>
           <a href="#contact" className="transition-colors hover:text-neon-cyan">
-            // CONTACT
+             CONTACT
           </a>
         </div>
       </div>

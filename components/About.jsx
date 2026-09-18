@@ -33,7 +33,7 @@ export default function About() {
             <div className="absolute bottom-4 left-4 right-4 rounded-xl border border-neon-pink/30 bg-cyber-bg/85 p-3.5 font-mono text-[11px] backdrop-blur-md">
               <div className="flex items-center justify-between text-neon-pink">
                 <span>IDENTITY: MICK DANIEL MORALES</span>
-                <span className="text-neon-cyan">CLASS: DEV // IT</span>
+                <span className="text-neon-cyan">CLASS: DEV / IT</span>
               </div>
               <p className="mt-1 text-fog/80 text-[10px]">
                 PASSIONATE ABOUT SCALABLE SYSTEMS & ELEGANT UI/UX
@@ -45,7 +45,7 @@ export default function About() {
           <div className="flex flex-col justify-center">
             <div className="flex items-center gap-2 font-mono text-xs text-neon-pink">
               <span className="h-2 w-2 rounded-full bg-neon-pink shadow-[0_0_8px_#ff007f]" />
-              <span className="tracking-widest uppercase">// ABOUT OPERATOR</span>
+              <span className="tracking-widest uppercase">ABOUT</span>
             </div>
 
             <h2 className="mt-3 max-w-[620px] text-3xl font-extrabold text-white md:text-[3.8rem] md:leading-[1.02]">
@@ -62,11 +62,11 @@ export default function About() {
             {/* System Specs */}
             <div className="mt-8 grid gap-4 sm:grid-cols-2">
               <div className="corner-brackets rounded-2xl border border-neon-cyan/25 bg-cyber-card/70 p-4 backdrop-blur-sm">
-                <p className="font-mono text-xs text-neon-cyan">// GEOLOCATION</p>
+                <p className="font-mono text-xs text-neon-cyan">LOCATION</p>
                 <p className="mt-2 text-[1.05rem] font-medium text-white">{profile.location}</p>
               </div>
               <div className="corner-brackets rounded-2xl border border-neon-pink/25 bg-cyber-card/70 p-4 backdrop-blur-sm">
-                <p className="font-mono text-xs text-neon-pink">// ACADEMIC INSTITUTION</p>
+                <p className="font-mono text-xs text-neon-pink">ACADEMIC INSTITUTION</p>
                 <p className="mt-2 text-[1.05rem] font-medium text-white">{profile.school}</p>
               </div>
             </div>

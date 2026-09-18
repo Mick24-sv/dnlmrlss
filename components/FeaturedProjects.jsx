@@ -28,7 +28,7 @@ export default function FeaturedProjects() {
         <div className="mb-12">
           <div className="flex items-center gap-2 font-mono text-xs text-neon-cyan">
             <span className="h-2 w-2 rounded-full bg-neon-cyan shadow-[0_0_8px_#00f0ff]" />
-            <span className="tracking-widest uppercase">// FEATURED REPOSITORIES</span>
+            <span className="tracking-widest uppercase">FEATURED REPOSITORIES</span>
           </div>
           <h2 className="mt-3 text-3xl font-extrabold text-white md:text-5xl">
             Selected Mission{' '}
@@ -66,7 +66,7 @@ export default function FeaturedProjects() {
                     />
                     <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-cyber-card via-transparent to-transparent opacity-80" />
                     <div className="absolute top-3 left-3 rounded-lg border border-neon-cyan/40 bg-cyber-bg/90 px-2.5 py-1 font-mono text-[10px] text-neon-cyan backdrop-blur-md">
-                      SYS // {String(idx + 1).padStart(2, '0')}
+                      SYS  {String(idx + 1).padStart(2, '0')}
                     </div>
                   </div>
                 )}

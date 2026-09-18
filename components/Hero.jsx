@@ -31,7 +31,7 @@ export default function Hero() {
           {/* Cyber Status Badge */}
           <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-neon-cyan/40 bg-neon-cyan/10 px-3.5 py-1.5 font-mono text-[11px] tracking-wider text-neon-cyan shadow-[0_0_15px_rgba(0,240,255,0.25)]">
             <span className="h-2 w-2 animate-ping rounded-full bg-neon-cyan" />
-            <span>CORE PROTOCOL // {profile.name.toUpperCase()}</span>
+            <span>CORE PROTOCOL {profile.name.toUpperCase()}</span>
           </div>
 
           {/* Glowing Headline */}
@@ -142,7 +142,7 @@ export default function Hero() {
                     <span className="text-neon-green">STATUS: VERIFIED</span>
                   </div>
                   <div className="mt-1 text-fog text-[10px]">
-                    LOCATION: NAGA CITY, BICOL // ADNU CS/IT
+                    LOCATION: NAGA CITY, BICOL / ADNU CS/IT
                   </div>
                 </div>
               </div>

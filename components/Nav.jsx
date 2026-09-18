@@ -30,7 +30,7 @@ export default function Nav() {
               </span>
             </div>
             <p className="mt-1 text-[12px] font-mono text-fog/80 tracking-wider">
-              FULL-STACK // IT DEVELOPER
+              FULL-STACK / IT DEVELOPER
             </p>
           </div>
         </a>
@@ -38,16 +38,16 @@ export default function Nav() {
         {/* Navigation links */}
         <div className="hidden md:flex items-center gap-6 font-mono text-xs text-fog">
           <a href="#featured" className="transition hover:text-neon-cyan">
-            // WORK
+             WORK
           </a>
           <a href="#about" className="transition hover:text-neon-cyan">
-            // ABOUT
+             ABOUT
           </a>
           <a href="#capabilities" className="transition hover:text-neon-cyan">
-            // SKILLS
+             SKILLS
           </a>
           <a href="#work" className="transition hover:text-neon-cyan">
-            // ARCHIVE
+             ARCHIVE
           </a>
         </div>
 

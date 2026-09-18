@@ -10,7 +10,7 @@ export default function Contact() {
     message: ''
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
+  const [submitStatus, setSubmitStatus] = useState('idle');
 
   const handleChange = (e) => {
     setFormData({

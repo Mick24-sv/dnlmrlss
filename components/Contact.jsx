@@ -4,12 +4,47 @@ import { useState } from 'react';
 import { profile } from '@/lib/data';
 
 export default function Contact() {
-  const [copied, setCopied] = useState(false);
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    message: ''
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
 
-  const handleCopyEmail = () => {
-    navigator.clipboard.writeText(profile.email);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2500);
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value
+    });
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    setSubmitStatus('idle');
+
+    try {
+      // Replace with your form service endpoint (e.g., Formspree, EmailJS, etc.)
+      const response = await fetch('https://formspree.io/f/YOUR_FORM_ID', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (response.ok) {
+        setSubmitStatus('success');
+        setFormData({ name: '', email: '', message: '' });
+      } else {
+        setSubmitStatus('error');
+      }
+    } catch (error) {
+      setSubmitStatus('error');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -28,34 +63,108 @@ export default function Contact() {
           </div>
 
           <h2 className="mt-4 text-3xl font-extrabold text-white md:text-5xl">
-            Let&apos;s build something{' '}
+            Get in{' '}
             <span className="bg-gradient-to-r from-neon-cyan to-neon-pink bg-clip-text text-transparent">
-              extraordinary.
+              Touch
             </span>
           </h2>
 
           <p className="mt-5 max-w-2xl text-base leading-7 text-fog md:text-lg">
-            I’m available for full-stack web applications, cross-platform mobile development, API infrastructure, and technical consulting.
+            Have a project in mind or want to collaborate? Send me a message and I'll get back to you within 24 hours.
           </p>
 
-          <div className="mt-9 flex flex-wrap items-center gap-4">
-            {/* Primary Email CTA */}
-            <a
-              href={`mailto:${profile.email}`}
-              className="group inline-flex items-center gap-2 rounded-xl bg-neon-cyan px-7 py-3.5 font-mono text-sm font-bold text-ink shadow-neon-cyan transition-all duration-300 hover:scale-105 hover:bg-white hover:shadow-neon-cyan-lg"
-            >
-              <span>SEND EMAIL</span>
-              <span className="transition-transform group-hover:translate-x-1">✉</span>
-            </a>
+          {/* Contact Form */}
+          <form onSubmit={handleSubmit} className="mt-9 space-y-6">
+            <div className="grid gap-6 md:grid-cols-2">
+              {/* Name Field */}
+              <div>
+                <label htmlFor="name" className="mb-2 block font-mono text-xs text-neon-cyan">
+                  NAME
+                </label>
+                <input
+                  type="text"
+                  id="name"
+                  name="name"
+                  value={formData.name}
+                  onChange={handleChange}
+                  required
+                  className="w-full rounded-xl border border-line bg-cyber-bg/80 px-4 py-3 font-mono text-sm text-white placeholder-fog/40 transition-all focus:border-neon-cyan focus:outline-none focus:ring-2 focus:ring-neon-cyan/20"
+                  placeholder="Your name"
+                />
+              </div>
 
-            {/* Quick Copy Email Button */}
+              {/* Email Field */}
+              <div>
+                <label htmlFor="email" className="mb-2 block font-mono text-xs text-neon-cyan">
+                  EMAIL
+                </label>
+                <input
+                  type="email"
+                  id="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  required
+                  className="w-full rounded-xl border border-line bg-cyber-bg/80 px-4 py-3 font-mono text-sm text-white placeholder-fog/40 transition-all focus:border-neon-cyan focus:outline-none focus:ring-2 focus:ring-neon-cyan/20"
+                  placeholder="your@email.com"
+                />
+              </div>
+            </div>
+
+            {/* Message Field */}
+            <div>
+              <label htmlFor="message" className="mb-2 block font-mono text-xs text-neon-cyan">
+                MESSAGE
+              </label>
+              <textarea
+                id="message"
+                name="message"
+                value={formData.message}
+                onChange={handleChange}
+                required
+                rows={5}
+                className="w-full rounded-xl border border-line bg-cyber-bg/80 px-4 py-3 font-mono text-sm text-white placeholder-fog/40 transition-all focus:border-neon-cyan focus:outline-none focus:ring-2 focus:ring-neon-cyan/20 resize-none"
+                placeholder="Tell me about your project..."
+              />
+            </div>
+
+            {/* Submit Button */}
             <button
-              onClick={handleCopyEmail}
-              className="inline-flex items-center gap-2 rounded-xl border border-neon-cyan/40 bg-cyber-bg/80 px-5 py-3.5 font-mono text-sm font-medium text-neon-cyan transition-all hover:scale-105 hover:border-neon-cyan hover:bg-neon-cyan/10"
+              type="submit"
+              disabled={isSubmitting}
+              className="inline-flex items-center gap-2 rounded-xl bg-neon-cyan px-7 py-3.5 font-mono text-sm font-bold text-ink shadow-neon-cyan transition-all duration-300 hover:scale-105 hover:bg-white hover:shadow-neon-cyan-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
             >
-              <span>{copied ? '✓ COPIED TO CLIPBOARD' : profile.email}</span>
+              {isSubmitting ? (
+                <>
+                  <span className="animate-spin">⏳</span>
+                  <span>SENDING...</span>
+                </>
+              ) : (
+                <>
+                  <span>SEND MESSAGE</span>
+                  <span className="transition-transform group-hover:translate-x-1">→</span>
+                </>
+              )}
             </button>
 
+            {/* Status Messages */}
+            {submitStatus === 'success' && (
+              <div className="flex items-center gap-2 rounded-xl border border-neon-green/40 bg-neon-green/10 px-4 py-3 font-mono text-sm text-neon-green">
+                <span className="h-2 w-2 rounded-full bg-neon-green animate-pulse" />
+                <span>Message sent successfully! I'll get back to you soon.</span>
+              </div>
+            )}
+
+            {submitStatus === 'error' && (
+              <div className="flex items-center gap-2 rounded-xl border border-neon-pink/40 bg-neon-pink/10 px-4 py-3 font-mono text-sm text-neon-pink">
+                <span className="h-2 w-2 rounded-full bg-neon-pink animate-pulse" />
+                <span>Something went wrong. Please try again.</span>
+              </div>
+            )}
+          </form>
+
+          {/* Social Links */}
+          <div className="mt-10 flex flex-wrap items-center gap-4">
             {/* GitHub */}
             <a
               href={profile.github}

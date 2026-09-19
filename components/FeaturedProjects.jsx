@@ -37,7 +37,7 @@ export default function FeaturedProjects() {
             </span>
           </h2>
           <p className="mt-4 max-w-2xl text-base leading-relaxed text-fog">
-            Production full-stack platforms and mobile systems engineered for real-time safety, high resilience, and community impact.
+            Production full-stack platforms a real-time safety, and community impact.
           </p>
         </div>
 

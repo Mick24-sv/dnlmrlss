@@ -36,7 +36,7 @@ export default function About() {
                 <span className="text-neon-cyan">CLASS: DEV / IT</span>
               </div>
               <p className="mt-1 text-fog/80 text-[10px]">
-                PASSIONATE ABOUT SCALABLE SYSTEMS & ELEGANT UI/UX
+                PASSIONATE ABOUT SCALABLE SYSTEMS & UI/UX
               </p>
             </div>
           </TiltCard>

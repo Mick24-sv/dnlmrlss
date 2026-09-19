@@ -51,7 +51,7 @@ export default function Hero() {
 
           {/* Subtext */}
           <p className="mt-7 max-w-[640px] text-[1.05rem] leading-8 text-fog md:text-[1.2rem]">
-            I&apos;m a full-stack developer and IT student at <span className="text-neon-cyan font-medium">Ateneo de Naga University</span>, building resilient, user-first software across web, mobile, and network systems.
+            I&apos;m a full-stack developer and IT student at <span className="text-neon-cyan font-medium">Ateneo de Naga University</span>, building resilient, user-first software across web.
           </p>
 
           {/* Telemetry Chips */}

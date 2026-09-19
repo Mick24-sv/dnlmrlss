@@ -26,7 +26,7 @@ export default function Contact() {
 
     try {
       // Replace with your form service endpoint (e.g., Formspree, EmailJS, etc.)
-      const response = await fetch('https://formspree.io/f/YOUR_FORM_ID', {
+      const response = await fetch('https://formspree.io/f/xdekkqrq', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

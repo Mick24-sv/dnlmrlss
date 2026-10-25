@@ -76,7 +76,7 @@ export default function Projects() {
                   </div>
                 )}
 
-                <div className={`${p.image ? 'md:col-span-2' : ''} flex flex-col justify-between p-7 md:p-8`}>
+                <div className={`${p.image ? 'md:col-span-2' : 'md:col-span-3'} flex flex-col justify-between p-7 md:p-8`}>
                   <div>
                     <div className="mb-2 flex items-baseline gap-4">
                       <p className="font-mono text-xs text-neon-cyan">{p.path}</p>

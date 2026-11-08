@@ -24,7 +24,10 @@ export default function Projects() {
     const renderer = new CSS3DRenderer();
     host.appendChild(renderer.domElement);
     const objects = cards.current.map(el => { const obj = new CSS3DObject(el); scene.add(obj); return obj; });
+    const previews = objects.map(obj => obj.element.querySelector('.archive-image img'));
     let angle = 0, target = 0, speed = 0, pointer = null, lastX = 0, startX = 0, lastTime = 0, dragged = false, frame, previous = 0, selected = -1;
+    let lastScrollY = window.scrollY, scrollTime = 0, scrollSnap = false;
+    let imageTarget = 0, imageOffset = 0;
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
     const resize = () => {
       const { width, height } = host.getBoundingClientRect();
@@ -32,7 +35,23 @@ export default function Projects() {
       camera.position.z = width < 600 ? 1250 : 1210; camera.updateProjectionMatrix();
     };
     const observer = new ResizeObserver(resize); observer.observe(host); resize();
-    const go = n => { target = n * step; speed = 0; if (reduced.matches) angle = target; };
+    const go = n => { scrollSnap = false; target = n * step; speed = 0; if (reduced.matches) angle = target; };
+    const scroll = () => {
+      const delta = window.scrollY - lastScrollY;
+      lastScrollY = window.scrollY;
+      if (reduced.matches) return;
+      const rect = host.getBoundingClientRect();
+      if (rect.bottom <= 0 || rect.top >= window.innerHeight) return;
+      imageTarget = THREE.MathUtils.clamp(
+        (window.innerHeight / 2 - rect.top - rect.height / 2) / (window.innerHeight / 2 + rect.height / 2), -1, 1
+      ) * 14;
+      // Let the page scroll normally; feed only visible scrolling into the ring.
+      if (pointer !== null || delta === 0) return;
+      speed = 0;
+      target = (target ?? angle) - THREE.MathUtils.clamp(delta, -100, 100) * .003;
+      scrollTime = performance.now();
+      scrollSnap = true;
+    };
     api.current = {
       move: direction => go(Math.round((target ?? angle) / step) - direction),
       select: index => {
@@ -45,7 +64,7 @@ export default function Projects() {
     const down = e => {
       if (e.button !== 0 || e.target.closest('a, button')) return;
       pointer = e.pointerId; startX = lastX = e.clientX; lastTime = performance.now();
-      speed = 0; target = null; dragged = false;
+      speed = 0; target = null; dragged = false; scrollSnap = false;
       host.setPointerCapture(pointer); host.classList.add('is-dragging');
     };
     const move = e => {
@@ -66,8 +85,15 @@ export default function Projects() {
     const click = e => { if (dragged) { e.preventDefault(); e.stopPropagation(); dragged = false; } };
     host.addEventListener('pointerdown', down); host.addEventListener('pointermove', move);
     host.addEventListener('pointerup', up); host.addEventListener('pointercancel', up); host.addEventListener('click', click, true);
+    window.addEventListener('scroll', scroll, { passive: true });
     const animate = now => {
       const dt = Math.min((now - (previous || now)) / 16.667, 3); previous = now;
+      if (scrollSnap && now - scrollTime > 160) {
+        target = Math.round((target ?? angle) / step) * step;
+        scrollSnap = false;
+      }
+      imageOffset += ((reduced.matches ? 0 : imageTarget) - imageOffset) * (1 - Math.pow(.88, dt));
+      previews.forEach(image => { image.style.transform = `translateY(${imageOffset}px) scale(1.16)`; });
       if (pointer === null && target !== null) {
         if (Math.abs(speed) > .006 && !reduced.matches) { angle += speed * dt; speed *= Math.pow(.9, dt); }
         else { angle += (target - angle) * (1 - Math.pow(.86, dt)); if (Math.abs(target - angle) < .0001) angle = target; }
@@ -89,6 +115,8 @@ export default function Projects() {
       cancelAnimationFrame(frame); observer.disconnect(); api.current = null;
       host.removeEventListener('pointerdown', down); host.removeEventListener('pointermove', move);
       host.removeEventListener('pointerup', up); host.removeEventListener('pointercancel', up); host.removeEventListener('click', click, true);
+      window.removeEventListener('scroll', scroll);
+      previews.forEach(image => { image.style.transform = ''; });
       // Return React-owned nodes before disposing the renderer, including Strict Mode remounts.
       objects.forEach(obj => { obj.element.inert = false; host.appendChild(obj.element); scene.remove(obj); });
       renderer.domElement.remove();
@@ -104,7 +132,7 @@ export default function Projects() {
         </div>
         <p className="mt-5 max-w-2xl text-sm leading-relaxed text-fog">Direct directory access to deployed web applications, full-stack systems, and reservation platforms with live production URLs.</p>
       </div>
-      <div ref={hostRef} className="archive-stage" role="region" aria-roledescription="carousel" aria-label="Project archive. Drag to rotate, or use the arrow keys." tabIndex={0} onKeyDown={e => {
+      <div ref={hostRef} className="archive-stage" role="region" aria-roledescription="carousel" aria-label="Project archive. Drag, scroll, or use the arrow keys to rotate." tabIndex={0} onKeyDown={e => {
         if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') { e.preventDefault(); api.current?.move(e.key === 'ArrowRight' ? 1 : -1); }
       }}>
         {projects.map((p, i) => <article ref={el => { cards.current[i] = el; }} className="archive-card" key={p.name} aria-label={`${i + 1} of ${projects.length}: ${p.name}`}>
@@ -117,7 +145,7 @@ export default function Projects() {
         </article>)}
       </div>
       <div className="archive-navigation mx-auto max-w-content px-6 md:px-10">
-        <p className="archive-hint"><MoveHorizontal size={16} aria-hidden="true" /> <span>DRAG TO EXPLORE</span></p>
+        <p className="archive-hint"><MoveHorizontal size={16} aria-hidden="true" /> <span>DRAG OR SCROLL TO EXPLORE</span></p>
         <div className="archive-pagination"><button type="button" aria-label="Previous project" onClick={() => api.current?.move(-1)}><ArrowLeft size={16} className="mx-auto" aria-hidden="true" /></button>
           {projects.map((p, i) => <button type="button" key={p.name} className={`archive-dot ${active === i ? 'active' : ''}`} aria-label={`Show ${p.name}`} aria-current={active === i ? 'true' : undefined} onClick={() => api.current?.select(i)}><span /></button>)}
           <button type="button" aria-label="Next project" onClick={() => api.current?.move(1)}><ArrowRight size={16} className="mx-auto" aria-hidden="true" /></button></div>

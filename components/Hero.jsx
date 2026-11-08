@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { CodeXml, Smartphone, Network, Send, ArrowRight, Box, UserRound } from 'lucide-react';
 import Image from 'next/image';
 import dynamic from 'next/dynamic';
 import { profile } from '@/lib/data';
@@ -57,13 +58,13 @@ export default function Hero() {
           {/* Telemetry Chips */}
           <div className="mt-7 flex flex-wrap gap-2.5 font-mono text-[11px]">
             <div className="rounded-lg border border-neon-cyan/30 bg-cyber-card px-3 py-1.5 text-neon-cyan/90">
-              ⚡ FULL-STACK ARCHITECTURE
+              <CodeXml size={14} className="mr-2 inline-block" aria-hidden="true" />FULL-STACK ARCHITECTURE
             </div>
             <div className="rounded-lg border border-neon-pink/30 bg-cyber-card px-3 py-1.5 text-neon-pink/90">
-              📱 MOBILE & REACT NATIVE
+              <Smartphone size={14} className="mr-2 inline-block" aria-hidden="true" />MOBILE & REACT NATIVE
             </div>
             <div className="rounded-lg border border-neon-green/30 bg-cyber-card px-3 py-1.5 text-neon-green/90">
-              🌐 NETWORK & CLOUD DEVOPS
+              <Network size={14} className="mr-2 inline-block" aria-hidden="true" />NETWORK & CLOUD DEVOPS
             </div>
           </div>
 
@@ -74,13 +75,13 @@ export default function Hero() {
               className="group relative inline-flex items-center gap-2 overflow-hidden rounded-xl bg-neon-cyan px-7 py-3.5 font-mono text-[13px] font-bold tracking-wider text-ink shadow-neon-cyan transition-all duration-300 hover:scale-105 hover:bg-white hover:shadow-neon-cyan-lg"
             >
               <span>EXPLORE WORK</span>
-              <span className="transition-transform group-hover:translate-x-1">→</span>
+              <ArrowRight size={16} className="transition-transform group-hover:translate-x-1" aria-hidden="true" />
             </a>
             <a
               href="#contact"
               className="inline-flex items-center gap-2 rounded-xl border border-neon-pink/50 bg-neon-pink/10 px-7 py-3.5 font-mono text-[13px] font-semibold tracking-wider text-neon-pink shadow-[0_0_15px_rgba(255,0,127,0.2)] transition-all duration-300 hover:scale-105 hover:border-neon-pink hover:bg-neon-pink/20 hover:shadow-neon-pink"
             >
-              <span>TRANSMIT MESSAGE</span>
+              <Send size={15} aria-hidden="true" /><span>TRANSMIT MESSAGE</span>
             </a>
           </div>
         </div>
@@ -99,7 +100,7 @@ export default function Hero() {
                     : 'text-fog hover:text-paper'
                 }`}
               >
-                ✦ 3D HOLO
+                <Box size={12} className="mr-1.5 inline-block" aria-hidden="true" />3D HOLO
               </button>
               <button
                 onClick={() => setViewMode('photo')}
@@ -109,7 +110,7 @@ export default function Hero() {
                     : 'text-fog hover:text-paper'
                 }`}
               >
-                ✦ PORTRAIT
+                <UserRound size={12} className="mr-1.5 inline-block" aria-hidden="true" />PORTRAIT
               </button>
             </div>
 

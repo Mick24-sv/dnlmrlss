@@ -3,6 +3,16 @@ import { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
 import { CSS3DObject, CSS3DRenderer } from 'three/addons/renderers/CSS3DRenderer.js';
 import { projects } from '@/lib/data';
+import { Database, ArrowUpRight, ArrowLeft, ArrowRight, MoveHorizontal, CodeXml, Layers, Server, MapPin, Globe, Smartphone, CalendarDays, QrCode, BarChart3, Accessibility, Wrench } from 'lucide-react';
+
+const toolIcons = {
+  React: CodeXml, 'Next.js': Layers, 'Tailwind CSS': Layers, Supabase: Database,
+  'Leaflet.js': MapPin, Vercel: Server, HTML: CodeXml, CSS: Layers,
+  JavaScript: CodeXml, PostgreSQL: Database, 'React Native': Smartphone,
+  'Web Application': Globe, Scheduling: CalendarDays, 'QR Attendance': QrCode,
+  Reporting: BarChart3, 'In Development': Wrench, 'Responsive Design': Smartphone,
+  Accessibility,
+};
 const step = Math.PI * 2 / projects.length;
 const wrap = n => (n % projects.length + projects.length) % projects.length;
 export default function Projects() {
@@ -88,7 +98,7 @@ export default function Projects() {
     <section id="work" className="archive-section relative border-t border-neon-cyan/20 py-24 md:py-32">
       <div className="mx-auto max-w-content px-6 md:px-10">
         <div className="flex flex-wrap items-end justify-between gap-6">
-          <div><p className="archive-eyebrow"><span /> REPOSITORY DATABASE</p>
+          <div><p className="archive-eyebrow"><Database size={14} aria-hidden="true" /> REPOSITORY DATABASE</p>
             <h2 className="mt-3 text-3xl font-extrabold text-white md:text-5xl">Complete Project <span className="bg-gradient-to-r from-neon-cyan to-neon-purple bg-clip-text text-transparent">Archive</span></h2></div>
           <span className="archive-count">INDEXED NODES: {projects.length} REPOSITORIES</span>
         </div>
@@ -101,16 +111,16 @@ export default function Projects() {
           <div className="archive-image"><img src={p.image} alt={`${p.name} project preview`} draggable="false" />
             <span className="archive-node">NODE {String(i + 1).padStart(2, '0')}</span><span className="archive-live">● DEPLOYED LIVE</span></div>
           <div className="archive-card-body"><p className="archive-path">{p.path}</p><h3>{p.name}</h3>
-            <p className="archive-description">{p.description}</p><ul className="archive-tools">{p.tools.map(t => <li key={t}>{t}</li>)}</ul>
-            <a href={p.link} target="_blank" rel="noopener noreferrer" draggable="false">OPEN SYSTEM <span aria-hidden="true">↗</span><span className="sr-only">: {p.name} (opens in a new tab)</span></a>
+            <p className="archive-description">{p.description}</p><ul className="archive-tools">{p.tools.map(t => { const Icon = toolIcons[t] || CodeXml; return <li key={t}><Icon size={10} aria-hidden="true" />{t}</li>; })}</ul>
+            <a href={p.link} target="_blank" rel="noopener noreferrer" draggable="false">OPEN SYSTEM <ArrowUpRight size={18} aria-hidden="true" /><span className="sr-only">: {p.name} (opens in a new tab)</span></a>
           </div>
         </article>)}
       </div>
       <div className="archive-navigation mx-auto max-w-content px-6 md:px-10">
-        <p className="archive-hint">↔ <span>DRAG TO EXPLORE</span></p>
-        <div className="archive-pagination"><button type="button" aria-label="Previous project" onClick={() => api.current?.move(-1)}>←</button>
+        <p className="archive-hint"><MoveHorizontal size={16} aria-hidden="true" /> <span>DRAG TO EXPLORE</span></p>
+        <div className="archive-pagination"><button type="button" aria-label="Previous project" onClick={() => api.current?.move(-1)}><ArrowLeft size={16} className="mx-auto" aria-hidden="true" /></button>
           {projects.map((p, i) => <button type="button" key={p.name} className={`archive-dot ${active === i ? 'active' : ''}`} aria-label={`Show ${p.name}`} aria-current={active === i ? 'true' : undefined} onClick={() => api.current?.select(i)}><span /></button>)}
-          <button type="button" aria-label="Next project" onClick={() => api.current?.move(1)}>→</button></div>
+          <button type="button" aria-label="Next project" onClick={() => api.current?.move(1)}><ArrowRight size={16} className="mx-auto" aria-hidden="true" /></button></div>
         <p className="archive-position" aria-live="polite" aria-atomic="true">{String(active + 1).padStart(2, '0')} <span>/ {String(projects.length).padStart(2, '0')}</span></p>
       </div>
     </section>

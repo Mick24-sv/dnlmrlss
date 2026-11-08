@@ -1,7 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import { profile } from '@/lib/data';
+import { BriefcaseBusiness, UserRound, Cpu, FolderArchive, Mail, ArrowRight } from 'lucide-react';
 
 export default function Nav() {
   return (
@@ -36,17 +36,21 @@ export default function Nav() {
         </a>
 
         {/* Navigation links */}
-        <div className="hidden md:flex items-center gap-6 font-mono text-xs text-fog">
-          <a href="#featured" className="transition hover:text-neon-cyan">
+        <div className="hidden lg:flex items-center gap-6 font-mono text-xs text-fog">
+          <a href="#featured" className="inline-flex items-center gap-2 transition hover:text-neon-cyan">
+             <BriefcaseBusiness size={14} aria-hidden="true" />
              WORK
           </a>
-          <a href="#about" className="transition hover:text-neon-cyan">
+          <a href="#about" className="inline-flex items-center gap-2 transition hover:text-neon-cyan">
+             <UserRound size={14} aria-hidden="true" />
              ABOUT
           </a>
-          <a href="#capabilities" className="transition hover:text-neon-cyan">
+          <a href="#capabilities" className="inline-flex items-center gap-2 transition hover:text-neon-cyan">
+             <Cpu size={14} aria-hidden="true" />
              SKILLS
           </a>
-          <a href="#work" className="transition hover:text-neon-cyan">
+          <a href="#work" className="inline-flex items-center gap-2 transition hover:text-neon-cyan">
+             <FolderArchive size={14} aria-hidden="true" />
              ARCHIVE
           </a>
         </div>
@@ -57,8 +61,8 @@ export default function Nav() {
             className="relative inline-flex items-center justify-center overflow-hidden rounded-xl border border-neon-cyan/60 bg-neon-cyan/10 px-5 py-2 text-[13px] font-mono font-medium text-neon-cyan shadow-[0_0_15px_rgba(0,240,255,0.25)] transition-all duration-300 hover:scale-105 hover:bg-neon-cyan hover:text-ink hover:shadow-neon-cyan"
           >
             <span className="relative z-10 flex items-center gap-1.5">
-              <span>GET IN TOUCH</span>
-              <span className="text-xs">→</span>
+              <Mail size={14} aria-hidden="true" /><span>GET IN TOUCH</span>
+              <ArrowRight size={13} aria-hidden="true" />
             </span>
           </a>
         </div>

@@ -2,6 +2,9 @@
 
 import { capabilities } from '@/lib/data';
 import TiltCard from '@/components/TiltCard';
+import { CodeXml, Smartphone, Network, PanelsTopLeft, Check, Cpu } from 'lucide-react';
+
+const capabilityIcons = [CodeXml, Smartphone, Network, PanelsTopLeft];
 
 export default function Capabilities() {
   return (
@@ -12,7 +15,7 @@ export default function Capabilities() {
       <div className="mx-auto max-w-content px-6 md:px-10">
         <div className="mb-14 max-w-3xl">
           <div className="flex items-center gap-2 font-mono text-xs text-neon-green">
-            <span className="h-2 w-2 rounded-full bg-neon-green shadow-[0_0_8px_#00ff9d]" />
+            <Cpu size={16} aria-hidden="true" />
             <span className="tracking-widest uppercase">SYSTEM MODULES & CAPABILITIES</span>
           </div>
           <h2 className="mt-3 text-3xl font-extrabold text-white md:text-5xl">
@@ -27,7 +30,9 @@ export default function Capabilities() {
         </div>
 
         <div className="grid gap-6 md:grid-cols-2">
-          {capabilities.map((capability) => (
+          {capabilities.map((capability, index) => {
+            const Icon = capabilityIcons[index % capabilityIcons.length];
+            return (
             <TiltCard
               key={capability.number}
               className="group corner-brackets rounded-3xl border border-neon-cyan/25 bg-cyber-card/75 p-8 transition-all duration-300 hover:border-neon-cyan hover:shadow-[0_0_30px_rgba(0,240,255,0.2)]"
@@ -44,6 +49,7 @@ export default function Capabilities() {
               </div>
 
               <h3 className="mb-3 text-2xl font-bold text-white transition-colors group-hover:text-neon-cyan">
+                <span className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl border border-neon-cyan/30 bg-neon-cyan/10 text-neon-cyan"><Icon size={24} strokeWidth={1.5} aria-hidden="true" /></span>
                 {capability.label}
               </h3>
               <p className="text-[15px] leading-7 text-fog">{capability.detail}</p>
@@ -55,14 +61,14 @@ export default function Capabilities() {
                 <ul className="space-y-2.5">
                   {capability.deliverables.map((item) => (
                     <li key={item} className="flex items-center gap-2.5 text-sm text-fog">
-                      <span className="h-1.5 w-1.5 rounded-full bg-neon-pink shadow-[0_0_5px_#ff007f]" />
+                      <Check size={14} className="shrink-0 text-neon-pink" aria-hidden="true" />
                       <span>{item}</span>
                     </li>
                   ))}
                 </ul>
               </div>
             </TiltCard>
-          ))}
+          ); })}
         </div>
       </div>
     </section>

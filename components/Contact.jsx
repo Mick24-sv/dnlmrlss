@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { Mail, UserRound, MessageSquare, Send, Radio, Clock3, Globe } from 'lucide-react';
 import { profile } from '@/lib/data';
 
 export default function Contact() {
@@ -58,7 +59,7 @@ export default function Contact() {
           <div className="pointer-events-none absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-neon-cyan to-transparent opacity-80" />
 
           <div className="flex items-center gap-2 font-mono text-xs text-neon-cyan">
-            <span className="h-2 w-2 rounded-full bg-neon-cyan shadow-[0_0_8px_#00f0ff]" />
+            <Radio size={16} aria-hidden="true" />
             <span className="tracking-widest uppercase">TRANSMISSION TERMINAL</span>
           </div>
 
@@ -79,7 +80,7 @@ export default function Contact() {
               {/* Name Field */}
               <div>
                 <label htmlFor="name" className="mb-2 block font-mono text-xs text-neon-cyan">
-                  NAME
+                  <UserRound size={13} className="mr-2 inline-block" aria-hidden="true" />NAME
                 </label>
                 <input
                   type="text"
@@ -96,7 +97,7 @@ export default function Contact() {
               {/* Email Field */}
               <div>
                 <label htmlFor="email" className="mb-2 block font-mono text-xs text-neon-cyan">
-                  EMAIL
+                  <Mail size={13} className="mr-2 inline-block" aria-hidden="true" />EMAIL
                 </label>
                 <input
                   type="email"
@@ -114,7 +115,7 @@ export default function Contact() {
             {/* Message Field */}
             <div>
               <label htmlFor="message" className="mb-2 block font-mono text-xs text-neon-cyan">
-                MESSAGE
+                <MessageSquare size={13} className="mr-2 inline-block" aria-hidden="true" />MESSAGE
               </label>
               <textarea
                 id="message"
@@ -141,7 +142,7 @@ export default function Contact() {
                 </>
               ) : (
                 <>
-                  <span>SEND MESSAGE</span>
+                  <Send size={15} aria-hidden="true" /><span>SEND MESSAGE</span>
                   <span className="transition-transform group-hover:translate-x-1">→</span>
                 </>
               )}
@@ -223,8 +224,8 @@ export default function Contact() {
               <span className="h-2 w-2 rounded-full bg-neon-green animate-pulse" />
               <span>COMMUNICATION CHANNELS: OPEN</span>
             </div>
-            <div>RESPONSE TIME: &lt; 24 HOURS</div>
-            <div>TIMEZONE: GMT+8 (PHILIPPINES)</div>
+            <div className="inline-flex items-center gap-2"><Clock3 size={14} aria-hidden="true" />RESPONSE TIME: &lt; 24 HOURS</div>
+            <div className="inline-flex items-center gap-2"><Globe size={14} aria-hidden="true" />TIMEZONE: GMT+8 (PHILIPPINES)</div>
           </div>
         </div>
       </div>

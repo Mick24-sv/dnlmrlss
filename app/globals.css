@@ -154,7 +154,7 @@ body {
 .archive-card h3 { color: #fff; font-size: 24px; font-weight: 750; margin: 9px 0; }
 .archive-description { color: #a5b0c5; font-size: 12px; line-height: 1.7; height: 63px; overflow-y: auto; }
 .archive-tools { display: flex; flex-wrap: wrap; gap: 5px; margin: 13px 0; }
-.archive-tools li { font: 8px monospace; border: 1px solid #26364a; color: #bcc9dc; border-radius: 5px; padding: 4px 7px; }
+.archive-tools li { display: inline-flex; align-items: center; gap: 4px; font: 8px monospace; border: 1px solid #26364a; color: #bcc9dc; border-radius: 5px; padding: 4px 7px; }
 .archive-card a { display: flex; justify-content: space-between; align-items: center; color: #00f0ff; font: 10px monospace; padding-top: 12px; border-top: 1px solid #18273c; letter-spacing: .08em; }
 .archive-card a:hover { color: white; }
 .archive-card a > span[aria-hidden] { font-size: 18px; }

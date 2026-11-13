@@ -122,6 +122,28 @@ body {
   animation: fadeUp 0.7s ease both;
 }
 
+/* Scroll-driven portfolio rail; regular cards are the default fallback. */
+.portfolio-rail { position: relative; padding: 80px 0; }
+.rail-stage { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; max-width: 1180px; margin: 40px auto; padding: 0 40px; }
+.rail-card { border: 1px solid #00f0ff55; border-radius: 20px; background: #080f20f5; overflow: hidden; box-shadow: 0 20px 60px #0006; }
+.rail-preview { width: 100%; height: 170px; object-fit: cover; object-position: top; }
+.rail-card-content { padding: 26px; }
+.rail-progress { display: none; }
+.rail-enabled { height: 850vh; padding: 0; }
+.rail-enabled .rail-sticky { position: sticky; top: 0; height: 100svh; overflow: hidden; }
+.rail-enabled .rail-heading { position: absolute; top: 70px; left: 0; right: 0; z-index: 3; pointer-events: none; }
+.rail-enabled .rail-stage { display: block; position: absolute; inset: 0; width: 100%; height: 100%; max-width: none; margin: 0; padding: 0; }
+.rail-enabled .rail-card { width: 390px; min-height: 340px; backface-visibility: hidden; }
+.rail-webgl, .rail-labels { position: absolute; inset: 0; }
+.rail-webgl { pointer-events: none; }
+.rail-enabled .rail-progress { position: absolute; display: flex; justify-content: space-between; align-items: center; gap: 20px; bottom: 24px; left: 5%; right: 5%; z-index: 4; border-top: 1px solid #00f0ff30; padding: 16px 20px; background: #030712e8; color: #00f0ff; font: 10px monospace; letter-spacing: .08em; border-radius: 12px; }
+.rail-progress div { display: flex; gap: 8px; }
+.rail-progress button { padding: 10px; color: #8297ae; border-radius: 6px; }
+.rail-progress button.active { background: #00f0ff22; color: #00f0ff; }
+.rail-progress button:focus-visible, .rail-card a:focus-visible { outline: 2px solid #00f0ff; outline-offset: 4px; }
+@media (max-width: 899px) { .rail-stage { grid-template-columns: 1fr; max-width: 600px; padding: 0 24px; } }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+
 @keyframes fadeUp {
   from {
     opacity: 0;

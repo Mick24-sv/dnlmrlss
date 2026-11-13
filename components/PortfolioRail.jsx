@@ -13,12 +13,16 @@ const stops = projects.flatMap((project, index) => [
 export default function PortfolioRail() {
   const section = useRef(null), host = useRef(null), cards = useRef([]);
   const [active, setActive] = useState(0);
+  const [motionOverride, setMotionOverride] = useState(null);
+  const [animated, setAnimated] = useState(false);
   useEffect(() => {
     const media = window.matchMedia('(prefers-reduced-motion: no-preference)');
     let dispose = () => {};
     const setup = () => {
       dispose();
-      if (!media.matches) return;
+      const enabled = motionOverride ?? media.matches;
+      setAnimated(enabled);
+      if (!enabled) return;
       const container = host.current;
       const scene = new THREE.Scene();
       const camera = new THREE.PerspectiveCamera(52, 1, 1, 18000);
@@ -68,6 +72,8 @@ export default function PortfolioRail() {
       resize(); progress = target;
       const draw = () => {
         frame = requestAnimationFrame(draw);
+        // Read actual layout each frame, including restored scroll and layout shifts.
+        updateScroll();
         progress = THREE.MathUtils.lerp(progress, target, .085);
         const t = .025 + progress * .70;
         camera.position.copy(curve.getPointAt(t));
@@ -102,14 +108,18 @@ export default function PortfolioRail() {
     };
     setup(); media.addEventListener('change', setup);
     return () => { media.removeEventListener('change', setup); dispose(); };
-  }, []);
+  }, [motionOverride]);
 
   return <section id="featured" ref={section} className="portfolio-rail border-t border-neon-cyan/20">
+    <span id="work" className="absolute left-0 top-0" aria-hidden="true" />
     <div className="rail-sticky">
       <header className="rail-heading mx-auto max-w-content px-6 md:px-10">
         <p className="font-mono text-xs tracking-widest text-neon-cyan">SELECTED MISSIONS / ENGINEERING DISCIPLINES</p>
         <h2 className="mt-3 text-3xl font-extrabold md:text-5xl">Follow the <span className="bg-gradient-to-r from-neon-cyan to-neon-pink bg-clip-text text-transparent">build path.</span></h2>
         <p className="mt-3 text-sm text-fog">Eight stops through my projects and capabilities. Scroll to explore.</p>
+        <button type="button" className="rail-motion-toggle" aria-pressed={animated} onClick={() => setMotionOverride(!animated)}>
+          {animated ? '3D SCROLL ON · SWITCH TO LIST' : 'ENABLE 3D SCROLL'}
+        </button>
       </header>
       <div id="capabilities" className="rail-stage" ref={host}>
         {stops.map((stop, index) => <article key={stop.name} ref={el => { cards.current[index] = el; }} className="rail-card">

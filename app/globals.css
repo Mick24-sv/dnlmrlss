@@ -129,6 +129,8 @@ body {
 .rail-preview { width: 100%; height: 170px; object-fit: cover; object-position: top; }
 .rail-card-content { padding: 26px; }
 .rail-progress { display: none; }
+.rail-motion-toggle { pointer-events: auto; margin-top: 14px; padding: 10px 14px; border: 1px solid #00f0ff66; border-radius: 8px; background: #080f20; color: #00f0ff; font: 10px monospace; letter-spacing: .06em; }
+.rail-motion-toggle:focus-visible { outline: 2px solid #00f0ff; outline-offset: 4px; }
 .rail-enabled { height: 850vh; padding: 0; }
 .rail-enabled .rail-sticky { position: sticky; top: 0; height: 100svh; overflow: hidden; }
 .rail-enabled .rail-heading { position: absolute; top: 70px; left: 0; right: 0; z-index: 3; pointer-events: none; }

@@ -123,7 +123,7 @@ export default function Projects() {
     };
   }, []);
   return (
-    <section id="work" className="archive-section relative border-t border-neon-cyan/20 py-24 md:py-32">
+    <section id="archive" className="archive-section relative border-t border-neon-cyan/20 py-24 md:py-32">
       <div className="mx-auto max-w-content px-6 md:px-10">
         <div className="flex flex-wrap items-end justify-between gap-6">
           <div><p className="archive-eyebrow"><Database size={14} aria-hidden="true" /> REPOSITORY DATABASE</p>

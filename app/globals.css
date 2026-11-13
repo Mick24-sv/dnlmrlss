@@ -205,7 +205,7 @@ body {
 .archive-position { color: #00f0ff; white-space: nowrap; }
 .archive-position span { color: #52647b; }
 @media (max-width: 600px) {
-  .archive-stage { height: 520px; }
+  .archive-stage { height: clamp(480px, 136vw, 760px); }
   .archive-card { width: 360px; }
   .archive-navigation { flex-wrap: wrap; justify-content: center; }
   .archive-hint { width: 100%; justify-content: center; font-size: 9px; }

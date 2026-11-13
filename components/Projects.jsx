@@ -38,10 +38,10 @@ export default function Projects() {
       const { width, height } = host.getBoundingClientRect();
       renderer.setSize(width, height); camera.aspect = width / height;
       const mobile = width <= 600;
-      radiusX = mobile ? 300 : 490;
+      radiusX = mobile ? 390 : 490;
       radiusZ = mobile ? 180 : 330;
       camera.position.z = mobile
-        ? radiusZ + Math.max(650, 360 / (2 * Math.tan(THREE.MathUtils.degToRad(21)) * camera.aspect * .84))
+        ? radiusZ + 360 / (2 * Math.tan(THREE.MathUtils.degToRad(21)) * camera.aspect * .94)
         : 1210;
       camera.updateProjectionMatrix();
     };

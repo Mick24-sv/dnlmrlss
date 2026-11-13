@@ -30,11 +30,20 @@ export default function Projects() {
     let angle = 0, target = 0, speed = 0, pointer = null, lastX = 0, startX = 0, lastTime = 0, dragged = false, frame, previous = 0, selected = -1;
     let lastScrollY = window.scrollY, scrollTime = 0, scrollSnap = false;
     let imageTarget = 0, imageOffset = 0;
+    let visible = false, radiusX = 490, radiusZ = 330, lastImageOffset = Infinity;
+    const visibilityObserver = new IntersectionObserver(([entry]) => { visible = entry.isIntersecting; }, { threshold: .05 });
+    visibilityObserver.observe(host);
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
     const resize = () => {
       const { width, height } = host.getBoundingClientRect();
       renderer.setSize(width, height); camera.aspect = width / height;
-      camera.position.z = width < 600 ? 1250 : 1210; camera.updateProjectionMatrix();
+      const mobile = width <= 600;
+      radiusX = mobile ? 300 : 490;
+      radiusZ = mobile ? 180 : 330;
+      camera.position.z = mobile
+        ? radiusZ + Math.max(650, 360 / (2 * Math.tan(THREE.MathUtils.degToRad(21)) * camera.aspect * .84))
+        : 1210;
+      camera.updateProjectionMatrix();
     };
     const observer = new ResizeObserver(resize); observer.observe(host); resize();
     const go = n => { scrollSnap = false; target = n * step; speed = 0; };
@@ -90,8 +99,7 @@ export default function Projects() {
     window.addEventListener('scroll', scroll, { passive: true });
     const animate = now => {
       const dt = Math.min((now - (previous || now)) / 16.667, 3); previous = now;
-      const rect = host.getBoundingClientRect();
-      const visible = rect.top < window.innerHeight * .75 && rect.bottom > window.innerHeight * .25;
+      if (!visible || document.hidden) { frame = requestAnimationFrame(animate); return; }
       // Rotate immediately and continuously. Hover and keyboard focus must not
       // silently stop autoplay; use the explicit Pause control or drag instead.
       if (autoplayRef.current && visible && !document.hidden && pointer === null) {
@@ -104,26 +112,33 @@ export default function Projects() {
         scrollSnap = false;
       }
       imageOffset += ((reduced.matches ? 0 : imageTarget) - imageOffset) * (1 - Math.pow(.88, dt));
-      previews.forEach(image => { image.style.transform = `translateY(${imageOffset}px) scale(1.16)`; });
+      if (Math.abs(imageOffset - lastImageOffset) > .1) {
+        previews.forEach(image => { image.style.transform = `translate3d(0,${imageOffset.toFixed(2)}px,0) scale(1.16)`; });
+        lastImageOffset = imageOffset;
+      }
       if (pointer === null && target !== null) {
         if (Math.abs(speed) > .006 && !reduced.matches) { angle += speed * dt; speed *= Math.pow(.9, dt); }
         else { angle += (target - angle) * (1 - Math.pow(.94, dt)); if (Math.abs(target - angle) < .0001) angle = target; }
       }
       const current = wrap(Math.round(-angle / step));
-      if (current !== selected) { selected = current; setActive(current); }
+      if (current !== selected) {
+        selected = current; setActive(current);
+        objects.forEach((obj, i) => {
+          obj.element.style.pointerEvents = i === current ? 'auto' : 'none';
+          obj.element.inert = i !== current;
+        });
+      }
       objects.forEach((obj, i) => {
         const theta = angle + i * step, front = (Math.cos(theta) + 1) / 2;
-        obj.position.set(Math.sin(theta) * 490, -Math.cos(theta) * 10, Math.cos(theta) * 330);
+        obj.position.set(Math.sin(theta) * radiusX, -Math.cos(theta) * 10, Math.cos(theta) * radiusZ);
         obj.rotation.y = -Math.sin(theta) * .24; obj.scale.setScalar(.7 + front * .3);
-        obj.element.style.opacity = String(.25 + front * .75);
-        obj.element.style.filter = `brightness(${.45 + front * .55})`;
-        obj.element.style.pointerEvents = i === current ? 'auto' : 'none'; obj.element.inert = i !== current;
+        obj.element.style.opacity = (.25 + front * .75).toFixed(3);
       });
       renderer.render(scene, camera); frame = requestAnimationFrame(animate);
     };
     frame = requestAnimationFrame(animate);
     return () => {
-      cancelAnimationFrame(frame); observer.disconnect(); api.current = null;
+      cancelAnimationFrame(frame); observer.disconnect(); visibilityObserver.disconnect(); api.current = null;
       host.removeEventListener('pointerdown', down); host.removeEventListener('pointermove', move);
       host.removeEventListener('pointerup', up); host.removeEventListener('pointercancel', up); host.removeEventListener('click', click, true);
       window.removeEventListener('scroll', scroll);

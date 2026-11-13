@@ -51,6 +51,9 @@ export default function PortfolioRail() {
         return dot;
       });
       let target = 0, progress = 0, frame, previousActive = -1;
+      let visible = false;
+      const visibilityObserver = new IntersectionObserver(([entry]) => { visible = entry.isIntersecting; });
+      visibilityObserver.observe(section.current);
       const updateScroll = () => {
         const rect = section.current.getBoundingClientRect();
         target = THREE.MathUtils.clamp(-rect.top / (section.current.offsetHeight - window.innerHeight), 0, 1);
@@ -73,6 +76,7 @@ export default function PortfolioRail() {
       resize(); progress = target;
       const draw = () => {
         frame = requestAnimationFrame(draw);
+        if (!visible || document.hidden) return;
         // Read actual layout each frame, including restored scroll and layout shifts.
         updateScroll();
         progress = THREE.MathUtils.lerp(progress, target, .085);
@@ -95,7 +99,7 @@ export default function PortfolioRail() {
       };
       draw();
       dispose = () => {
-        cancelAnimationFrame(frame); observer.disconnect();
+        cancelAnimationFrame(frame); observer.disconnect(); visibilityObserver.disconnect();
         window.removeEventListener('scroll', updateScroll);
         objects.forEach(object => {
           object.element.inert = false;

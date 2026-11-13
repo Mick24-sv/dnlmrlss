@@ -180,6 +180,8 @@ body {
 .archive-image { position: relative; height: 190px; overflow: hidden; background: #0c1830; }
 .archive-image::after { content: ''; position: absolute; inset: 0; background: linear-gradient(transparent 65%, #080f20); pointer-events: none; }
 .archive-image img { width: 100%; height: 100%; object-fit: cover; object-position: top; pointer-events: none; transform-origin: center; }
+.archive-card { will-change: transform, opacity; box-shadow: 0 12px 30px #0006; }
+.archive-image img { will-change: transform; }
 .archive-node, .archive-live { position: absolute; top: 12px; font: 9px monospace; padding: 5px 7px; background: #030b16e8; border: 1px solid #00f0ff55; border-radius: 4px; color: #00f0ff; }
 .archive-node { left: 12px; }
 .archive-live { right: 12px; color: #84e4c0; border-color: #84e4c030; }
@@ -203,8 +205,10 @@ body {
 .archive-position { color: #00f0ff; white-space: nowrap; }
 .archive-position span { color: #52647b; }
 @media (max-width: 600px) {
-  .archive-stage { height: 490px; }
+  .archive-stage { height: 520px; }
+  .archive-card { width: 360px; }
   .archive-navigation { flex-wrap: wrap; justify-content: center; }
   .archive-hint { width: 100%; justify-content: center; font-size: 9px; }
   .archive-position { margin-left: 12px; }
+  .archive-pagination button { min-width: 44px; height: 44px; }
 }

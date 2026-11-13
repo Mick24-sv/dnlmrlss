@@ -14,7 +14,7 @@ export default function PortfolioRail() {
   const section = useRef(null), host = useRef(null), cards = useRef([]);
   const [active, setActive] = useState(0);
   useEffect(() => {
-    const media = window.matchMedia('(min-width: 900px) and (prefers-reduced-motion: no-preference)');
+    const media = window.matchMedia('(prefers-reduced-motion: no-preference)');
     let dispose = () => {};
     const setup = () => {
       dispose();
@@ -22,14 +22,9 @@ export default function PortfolioRail() {
       const container = host.current;
       const scene = new THREE.Scene();
       const camera = new THREE.PerspectiveCamera(52, 1, 1, 18000);
-      let renderer;
-      try { renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true }); }
-      catch { return; }
       const labels = new CSS3DRenderer();
-      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
-      renderer.domElement.className = 'rail-webgl';
       labels.domElement.className = 'rail-labels';
-      container.append(renderer.domElement, labels.domElement);
+      container.append(labels.domElement);
       section.current.classList.add('rail-enabled');
       const curve = new THREE.CatmullRomCurve3(Array.from({ length: 12 }, (_, i) =>
         new THREE.Vector3(Math.sin(i * .85) * 340, Math.sin(i * .6) * 65, 900 - i * 850)));
@@ -40,10 +35,16 @@ export default function PortfolioRail() {
         scene.add(object);
         return object;
       });
-      const routeGeometry = new THREE.BufferGeometry().setFromPoints(curve.getSpacedPoints(600).map(p => p.add(new THREE.Vector3(0, -290, 0))));
-      const routeMaterial = new THREE.PointsMaterial({ color: '#00f0ff', size: 5, sizeAttenuation: true, transparent: true, opacity: .85 });
-      const route = new THREE.Points(routeGeometry, routeMaterial);
-      scene.add(route);
+      // CSS3D keeps the camera rail working even when WebGL is unavailable.
+      const dots = curve.getSpacedPoints(260).map(point => {
+        const element = document.createElement('span');
+        element.className = 'rail-route-dot';
+        element.setAttribute('aria-hidden', 'true');
+        const dot = new CSS3DObject(element);
+        dot.position.copy(point).add(new THREE.Vector3(0, -250, 0));
+        scene.add(dot);
+        return dot;
+      });
       let target = 0, progress = 0, frame, previousActive = -1;
       const updateScroll = () => {
         const rect = section.current.getBoundingClientRect();
@@ -51,9 +52,15 @@ export default function PortfolioRail() {
       };
       const resize = () => {
         const { width, height } = container.getBoundingClientRect();
+        const mobile = width < 900;
+        objects.forEach((object, index) => {
+          object.position.copy(curve.getPointAt(.12 + index * .10));
+          object.position.x += (index % 2 ? 1 : -1) * (mobile ? 85 : 390);
+          object.scale.setScalar(mobile ? .62 : 1);
+        });
         camera.aspect = width / height;
         camera.updateProjectionMatrix();
-        renderer.setSize(width, height); labels.setSize(width, height);
+        labels.setSize(width, height);
         updateScroll();
       };
       const observer = new ResizeObserver(resize); observer.observe(container);
@@ -76,7 +83,8 @@ export default function PortfolioRail() {
           object.element.inert = !visible;
           object.element.style.opacity = String(THREE.MathUtils.clamp((3800 - distance) / 1000, 0, 1));
         });
-        renderer.render(scene, camera); labels.render(scene, camera);
+        dots.forEach(dot => { dot.quaternion.copy(camera.quaternion); });
+        labels.render(scene, camera);
       };
       draw();
       dispose = () => {
@@ -85,10 +93,10 @@ export default function PortfolioRail() {
         objects.forEach(object => {
           object.element.inert = false;
           object.element.removeAttribute('style');
-          container.appendChild(object.element); scene.remove(object);
+          scene.remove(object); container.appendChild(object.element);
         });
-        routeGeometry.dispose(); routeMaterial.dispose(); renderer.dispose();
-        renderer.domElement.remove(); labels.domElement.remove();
+        dots.forEach(dot => { scene.remove(dot); dot.element.remove(); });
+        labels.domElement.remove();
         section.current?.classList.remove('rail-enabled');
       };
     };

@@ -15,7 +15,7 @@ body {
   background-color: #030712;
   color: #f3f4f6;
   font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-  overflow-x: hidden;
+  overflow-x: clip;
 }
 
 * {
@@ -136,12 +136,22 @@ body {
 .rail-enabled .rail-card { width: 390px; min-height: 340px; backface-visibility: hidden; }
 .rail-webgl, .rail-labels { position: absolute; inset: 0; }
 .rail-webgl { pointer-events: none; }
+.rail-route-dot { width: 7px; height: 7px; border-radius: 50%; background: #00f0ff; box-shadow: 0 0 12px #00f0ff99; pointer-events: none !important; backface-visibility: hidden; }
 .rail-enabled .rail-progress { position: absolute; display: flex; justify-content: space-between; align-items: center; gap: 20px; bottom: 24px; left: 5%; right: 5%; z-index: 4; border-top: 1px solid #00f0ff30; padding: 16px 20px; background: #030712e8; color: #00f0ff; font: 10px monospace; letter-spacing: .08em; border-radius: 12px; }
 .rail-progress div { display: flex; gap: 8px; }
 .rail-progress button { padding: 10px; color: #8297ae; border-radius: 6px; }
 .rail-progress button.active { background: #00f0ff22; color: #00f0ff; }
 .rail-progress button:focus-visible, .rail-card a:focus-visible { outline: 2px solid #00f0ff; outline-offset: 4px; }
 @media (max-width: 899px) { .rail-stage { grid-template-columns: 1fr; max-width: 600px; padding: 0 24px; } }
+@media (max-width: 899px) {
+  .rail-enabled .rail-heading { top: 76px; }
+  .rail-enabled .rail-heading h2 { font-size: 28px; }
+  .rail-enabled .rail-heading p:last-child { max-width: 300px; font-size: 12px; }
+  .rail-enabled .rail-progress { bottom: 16px; left: 12px; right: 12px; padding: 10px 8px; gap: 4px; }
+  .rail-progress div { gap: 0; }
+  .rail-progress button { padding: 12px 8px; }
+  .rail-progress > span:first-child { display: none; }
+}
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
 
 @keyframes fadeUp {

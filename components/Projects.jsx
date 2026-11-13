@@ -18,6 +18,8 @@ const wrap = n => (n % projects.length + projects.length) % projects.length;
 export default function Projects() {
   const hostRef = useRef(null), cards = useRef([]), api = useRef(null);
   const [active, setActive] = useState(0);
+  const [autoplay, setAutoplay] = useState(true);
+  const autoplayRef = useRef(true);
   useEffect(() => {
     const host = hostRef.current, scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(42, 1, 1, 5000);
@@ -28,6 +30,7 @@ export default function Projects() {
     let angle = 0, target = 0, speed = 0, pointer = null, lastX = 0, startX = 0, lastTime = 0, dragged = false, frame, previous = 0, selected = -1;
     let lastScrollY = window.scrollY, scrollTime = 0, scrollSnap = false;
     let imageTarget = 0, imageOffset = 0;
+    let elapsed = 0;
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
     const resize = () => {
       const { width, height } = host.getBoundingClientRect();
@@ -35,13 +38,14 @@ export default function Projects() {
       camera.position.z = width < 600 ? 1250 : 1210; camera.updateProjectionMatrix();
     };
     const observer = new ResizeObserver(resize); observer.observe(host); resize();
-    const go = n => { scrollSnap = false; target = n * step; speed = 0; if (reduced.matches) angle = target; };
+    const go = n => { elapsed = 0; scrollSnap = false; target = n * step; speed = 0; };
     const scroll = () => {
       const delta = window.scrollY - lastScrollY;
       lastScrollY = window.scrollY;
       if (reduced.matches) return;
       const rect = host.getBoundingClientRect();
       if (rect.bottom <= 0 || rect.top >= window.innerHeight) return;
+      elapsed = 0;
       imageTarget = THREE.MathUtils.clamp(
         (window.innerHeight / 2 - rect.top - rect.height / 2) / (window.innerHeight / 2 + rect.height / 2), -1, 1
       ) * 14;
@@ -64,6 +68,7 @@ export default function Projects() {
     const down = e => {
       if (e.button !== 0 || e.target.closest('a, button')) return;
       pointer = e.pointerId; startX = lastX = e.clientX; lastTime = performance.now();
+      elapsed = 0;
       speed = 0; target = null; dragged = false; scrollSnap = false;
       host.setPointerCapture(pointer); host.classList.add('is-dragging');
     };
@@ -88,6 +93,13 @@ export default function Projects() {
     window.addEventListener('scroll', scroll, { passive: true });
     const animate = now => {
       const dt = Math.min((now - (previous || now)) / 16.667, 3); previous = now;
+      const rect = host.getBoundingClientRect();
+      const visible = rect.top < window.innerHeight * .75 && rect.bottom > window.innerHeight * .25;
+      const interacting = pointer !== null || host.querySelector('.archive-card:hover') || host.contains(document.activeElement);
+      if (autoplayRef.current && visible && !document.hidden && !interacting) {
+        elapsed += dt * 16.667;
+        if (elapsed >= 4000) go(Math.round((target ?? angle) / step) - 1);
+      } else elapsed = 0;
       if (scrollSnap && now - scrollTime > 160) {
         target = Math.round((target ?? angle) / step) * step;
         scrollSnap = false;
@@ -96,7 +108,7 @@ export default function Projects() {
       previews.forEach(image => { image.style.transform = `translateY(${imageOffset}px) scale(1.16)`; });
       if (pointer === null && target !== null) {
         if (Math.abs(speed) > .006 && !reduced.matches) { angle += speed * dt; speed *= Math.pow(.9, dt); }
-        else { angle += (target - angle) * (1 - Math.pow(.86, dt)); if (Math.abs(target - angle) < .0001) angle = target; }
+        else { angle += (target - angle) * (1 - Math.pow(.94, dt)); if (Math.abs(target - angle) < .0001) angle = target; }
       }
       const current = wrap(Math.round(-angle / step));
       if (current !== selected) { selected = current; setActive(current); }
@@ -118,7 +130,7 @@ export default function Projects() {
       window.removeEventListener('scroll', scroll);
       previews.forEach(image => { image.style.transform = ''; });
       // Return React-owned nodes before disposing the renderer, including Strict Mode remounts.
-      objects.forEach(obj => { obj.element.inert = false; host.appendChild(obj.element); scene.remove(obj); });
+      objects.forEach(obj => { obj.element.inert = false; scene.remove(obj); host.appendChild(obj.element); });
       renderer.domElement.remove();
     };
   }, []);
@@ -145,11 +157,16 @@ export default function Projects() {
         </article>)}
       </div>
       <div className="archive-navigation mx-auto max-w-content px-6 md:px-10">
-        <p className="archive-hint"><MoveHorizontal size={16} aria-hidden="true" /> <span>DRAG OR SCROLL TO EXPLORE</span></p>
+        <div className="archive-hint"><MoveHorizontal size={16} aria-hidden="true" /> <span>AUTO ROTATE · DRAG OR SCROLL</span>
+          <button type="button" className="rounded border border-neon-cyan/30 px-3 py-2 text-neon-cyan" aria-pressed={autoplay} onClick={() => {
+            autoplayRef.current = !autoplayRef.current;
+            setAutoplay(autoplayRef.current);
+          }}>{autoplay ? 'PAUSE' : 'PLAY'}</button>
+        </div>
         <div className="archive-pagination"><button type="button" aria-label="Previous project" onClick={() => api.current?.move(-1)}><ArrowLeft size={16} className="mx-auto" aria-hidden="true" /></button>
           {projects.map((p, i) => <button type="button" key={p.name} className={`archive-dot ${active === i ? 'active' : ''}`} aria-label={`Show ${p.name}`} aria-current={active === i ? 'true' : undefined} onClick={() => api.current?.select(i)}><span /></button>)}
           <button type="button" aria-label="Next project" onClick={() => api.current?.move(1)}><ArrowRight size={16} className="mx-auto" aria-hidden="true" /></button></div>
-        <p className="archive-position" aria-live="polite" aria-atomic="true">{String(active + 1).padStart(2, '0')} <span>/ {String(projects.length).padStart(2, '0')}</span></p>
+        <p className="archive-position" aria-live={autoplay ? 'off' : 'polite'} aria-atomic="true">{String(active + 1).padStart(2, '0')} <span>/ {String(projects.length).padStart(2, '0')}</span></p>
       </div>
     </section>
   );

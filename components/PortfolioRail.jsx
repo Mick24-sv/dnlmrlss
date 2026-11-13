@@ -13,14 +13,15 @@ const stops = projects.flatMap((project, index) => [
 export default function PortfolioRail() {
   const section = useRef(null), host = useRef(null), cards = useRef([]);
   const [active, setActive] = useState(0);
-  const [motionOverride, setMotionOverride] = useState(null);
-  const [animated, setAnimated] = useState(false);
+  // Start the requested scroll experience on every device; the list toggle
+  // remains available for visitors who prefer a static presentation.
+  const [motionOverride, setMotionOverride] = useState(true);
+  const [animated, setAnimated] = useState(true);
   useEffect(() => {
-    const media = window.matchMedia('(prefers-reduced-motion: no-preference)');
     let dispose = () => {};
     const setup = () => {
       dispose();
-      const enabled = motionOverride ?? media.matches;
+      const enabled = motionOverride;
       setAnimated(enabled);
       if (!enabled) return;
       const container = host.current;
@@ -106,8 +107,8 @@ export default function PortfolioRail() {
         section.current?.classList.remove('rail-enabled');
       };
     };
-    setup(); media.addEventListener('change', setup);
-    return () => { media.removeEventListener('change', setup); dispose(); };
+    setup();
+    return () => { dispose(); };
   }, [motionOverride]);
 
   return <section id="featured" ref={section} className="portfolio-rail border-t border-neon-cyan/20">

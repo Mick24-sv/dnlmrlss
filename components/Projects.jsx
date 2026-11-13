@@ -30,7 +30,6 @@ export default function Projects() {
     let angle = 0, target = 0, speed = 0, pointer = null, lastX = 0, startX = 0, lastTime = 0, dragged = false, frame, previous = 0, selected = -1;
     let lastScrollY = window.scrollY, scrollTime = 0, scrollSnap = false;
     let imageTarget = 0, imageOffset = 0;
-    let elapsed = 0;
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
     const resize = () => {
       const { width, height } = host.getBoundingClientRect();
@@ -38,14 +37,13 @@ export default function Projects() {
       camera.position.z = width < 600 ? 1250 : 1210; camera.updateProjectionMatrix();
     };
     const observer = new ResizeObserver(resize); observer.observe(host); resize();
-    const go = n => { elapsed = 0; scrollSnap = false; target = n * step; speed = 0; };
+    const go = n => { scrollSnap = false; target = n * step; speed = 0; };
     const scroll = () => {
       const delta = window.scrollY - lastScrollY;
       lastScrollY = window.scrollY;
       if (reduced.matches) return;
       const rect = host.getBoundingClientRect();
       if (rect.bottom <= 0 || rect.top >= window.innerHeight) return;
-      elapsed = 0;
       imageTarget = THREE.MathUtils.clamp(
         (window.innerHeight / 2 - rect.top - rect.height / 2) / (window.innerHeight / 2 + rect.height / 2), -1, 1
       ) * 14;
@@ -68,7 +66,6 @@ export default function Projects() {
     const down = e => {
       if (e.button !== 0 || e.target.closest('a, button')) return;
       pointer = e.pointerId; startX = lastX = e.clientX; lastTime = performance.now();
-      elapsed = 0;
       speed = 0; target = null; dragged = false; scrollSnap = false;
       host.setPointerCapture(pointer); host.classList.add('is-dragging');
     };
@@ -95,11 +92,13 @@ export default function Projects() {
       const dt = Math.min((now - (previous || now)) / 16.667, 3); previous = now;
       const rect = host.getBoundingClientRect();
       const visible = rect.top < window.innerHeight * .75 && rect.bottom > window.innerHeight * .25;
-      const interacting = pointer !== null || host.querySelector('.archive-card:hover') || host.contains(document.activeElement);
-      if (autoplayRef.current && visible && !document.hidden && !interacting) {
-        elapsed += dt * 16.667;
-        if (elapsed >= 4000) go(Math.round((target ?? angle) / step) - 1);
-      } else elapsed = 0;
+      // Rotate immediately and continuously. Hover and keyboard focus must not
+      // silently stop autoplay; use the explicit Pause control or drag instead.
+      if (autoplayRef.current && visible && !document.hidden && pointer === null) {
+        target = (target ?? angle) - dt * .0045;
+        speed = 0;
+        scrollSnap = false;
+      }
       if (scrollSnap && now - scrollTime > 160) {
         target = Math.round((target ?? angle) / step) * step;
         scrollSnap = false;
@@ -157,7 +156,7 @@ export default function Projects() {
         </article>)}
       </div>
       <div className="archive-navigation mx-auto max-w-content px-6 md:px-10">
-        <div className="archive-hint"><MoveHorizontal size={16} aria-hidden="true" /> <span>AUTO ROTATE · DRAG OR SCROLL</span>
+        <div className="archive-hint"><MoveHorizontal size={16} aria-hidden="true" /> <span>{autoplay ? 'AUTO ROTATING' : 'ROTATION PAUSED'} · DRAG OR SCROLL</span>
           <button type="button" className="rounded border border-neon-cyan/30 px-3 py-2 text-neon-cyan" aria-pressed={autoplay} onClick={() => {
             autoplayRef.current = !autoplayRef.current;
             setAutoplay(autoplayRef.current);

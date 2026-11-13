@@ -8,7 +8,10 @@
 
 html {
   scroll-behavior: smooth;
+  overflow-x: clip;
 }
+
+#top { overflow: clip; }
 
 body {
   margin: 0;

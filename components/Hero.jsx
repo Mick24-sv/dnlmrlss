@@ -26,9 +26,9 @@ export default function Hero() {
       <div className="pointer-events-none absolute -left-20 top-24 h-96 w-96 rounded-full bg-neon-cyan/10 blur-[120px]" />
       <div className="pointer-events-none absolute right-0 top-40 h-96 w-96 rounded-full bg-neon-pink/10 blur-[140px]" />
 
-      <div className="grid items-center gap-12 lg:grid-cols-[1.2fr_0.8fr]">
+      <div className="grid min-w-0 grid-cols-1 items-center gap-12 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,0.8fr)]">
         {/* Left column */}
-        <div className="relative z-10">
+        <div className="relative z-10 min-w-0">
           {/* Cyber Status Badge */}
           <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-neon-cyan/40 bg-neon-cyan/10 px-3.5 py-1.5 font-mono text-[11px] tracking-wider text-neon-cyan shadow-[0_0_15px_rgba(0,240,255,0.25)]">
             <span className="h-2 w-2 animate-ping rounded-full bg-neon-cyan" />
@@ -36,7 +36,7 @@ export default function Hero() {
           </div>
 
           {/* Glowing Headline */}
-          <h1 className="max-w-[760px] text-[3.8rem] font-extrabold leading-[0.92] tracking-[-0.06em] text-white md:text-[6.5rem]">
+          <h1 className="max-w-[760px] text-[clamp(2.65rem,13vw,3.8rem)] font-extrabold leading-[0.92] tracking-[-0.06em] text-white md:text-[6.5rem]">
             Building{' '}
             <span className="bg-gradient-to-r from-neon-cyan via-white to-neon-pink bg-clip-text text-transparent neon-text-cyan">
               clean
@@ -87,7 +87,7 @@ export default function Hero() {
         </div>
 
         {/* Right column: 3D Hologram / Cyber Portrait Showcase */}
-        <div className="relative">
+        <div className="relative min-w-0">
           {/* Outer Cyber Frame Container */}
           <div className="corner-brackets relative h-[460px] w-full overflow-hidden rounded-3xl border border-neon-cyan/30 bg-cyber-card/90 shadow-[0_0_50px_rgba(0,240,255,0.15)] backdrop-blur-xl">
             {/* Top View Mode Switcher */}

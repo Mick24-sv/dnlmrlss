@@ -40,26 +40,26 @@ export default function PortfolioRail() {
         scene.add(object);
         return object;
       });
-      // CSS3D keeps the camera rail working even when WebGL is unavailable.
-      const dots = curve.getSpacedPoints(260).map(point => {
-        const element = document.createElement('span');
-        element.className = 'rail-route-dot';
-        element.setAttribute('aria-hidden', 'true');
-        const dot = new CSS3DObject(element);
-        dot.position.copy(point).add(new THREE.Vector3(0, -250, 0));
-        scene.add(dot);
-        return dot;
-      });
+      // One canvas replaces hundreds of independently composited DOM dots.
+      const routeCanvas = document.createElement('canvas');
+      routeCanvas.className = 'rail-route-canvas';
+      routeCanvas.setAttribute('aria-hidden', 'true');
+      container.prepend(routeCanvas);
+      const context = routeCanvas.getContext('2d');
+      const routePoints = curve.getSpacedPoints(180).map(point => point.add(new THREE.Vector3(0, -250, 0)));
+      const projected = new THREE.Vector3(), view = new THREE.Vector3();
       let target = 0, progress = 0, frame, previousActive = -1;
-      let visible = false;
+      let visible = false, sectionTop = 0, scrollRange = 1, width = 1, height = 1;
+      let lastProgress = -1, lastTime = 0;
       const visibilityObserver = new IntersectionObserver(([entry]) => { visible = entry.isIntersecting; });
       visibilityObserver.observe(section.current);
       const updateScroll = () => {
-        const rect = section.current.getBoundingClientRect();
-        target = THREE.MathUtils.clamp(-rect.top / (section.current.offsetHeight - window.innerHeight), 0, 1);
+        target = THREE.MathUtils.clamp((window.scrollY - sectionTop) / scrollRange, 0, 1);
       };
       const resize = () => {
-        const { width, height } = container.getBoundingClientRect();
+        ({ width, height } = container.getBoundingClientRect());
+        sectionTop = window.scrollY + section.current.getBoundingClientRect().top;
+        scrollRange = Math.max(1, section.current.offsetHeight - window.innerHeight);
         const mobile = width < 900;
         objects.forEach((object, index) => {
           object.position.copy(curve.getPointAt(.12 + index * .10));
@@ -69,33 +69,61 @@ export default function PortfolioRail() {
         camera.aspect = width / height;
         camera.updateProjectionMatrix();
         labels.setSize(width, height);
+        const pixelRatio = Math.min(window.devicePixelRatio || 1, 1.5);
+        routeCanvas.width = Math.round(width * pixelRatio);
+        routeCanvas.height = Math.round(height * pixelRatio);
+        context?.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
+        lastProgress = -1;
         updateScroll();
       };
       const observer = new ResizeObserver(resize); observer.observe(container);
       window.addEventListener('scroll', updateScroll, { passive: true });
       resize(); progress = target;
-      const draw = () => {
+      const draw = (now = performance.now()) => {
         frame = requestAnimationFrame(draw);
+        const elapsed = Math.min(50, now - (lastTime || now));
+        lastTime = now;
         if (!visible || document.hidden) return;
-        // Read actual layout each frame, including restored scroll and layout shifts.
-        updateScroll();
-        progress = THREE.MathUtils.lerp(progress, target, .085);
+        if (lastProgress >= 0 && Math.abs(target - progress) < .00001) return;
+        progress = THREE.MathUtils.lerp(progress, target, 1 - Math.exp(-elapsed / 110));
+        lastProgress = progress;
         const t = .025 + progress * .70;
         camera.position.copy(curve.getPointAt(t));
         const focus = curve.getPointAt(Math.min(t + .105, 1));
         camera.lookAt(focus);
+        camera.updateMatrixWorld();
         const current = Math.min(7, Math.round(progress * 7));
         if (current !== previousActive) { previousActive = current; setActive(current); }
         objects.forEach(object => {
           object.quaternion.copy(camera.quaternion);
-          const distance = camera.position.distanceTo(object.position);
-          const visible = object.position.z < camera.position.z - 120 && distance < 3800;
-          object.element.style.visibility = visible ? 'visible' : 'hidden';
-          object.element.inert = !visible;
-          object.element.style.opacity = String(THREE.MathUtils.clamp((3800 - distance) / 1000, 0, 1));
+          const depth = -view.copy(object.position).applyMatrix4(camera.matrixWorldInverse).z;
+          const show = depth > 600 && depth < 3300;
+          if (object.visible !== show) {
+            object.visible = show;
+            object.element.inert = !show;
+          }
+          if (show) object.element.style.opacity = Math.min(
+            THREE.MathUtils.clamp((depth - 600) / 300, 0, 1),
+            THREE.MathUtils.clamp((3300 - depth) / 700, 0, 1)
+          ).toFixed(3);
         });
-        dots.forEach(dot => { dot.quaternion.copy(camera.quaternion); });
         labels.render(scene, camera);
+        if (context) {
+          context.clearRect(0, 0, width, height);
+          context.fillStyle = '#00f0ff';
+          context.beginPath();
+          routePoints.forEach(point => {
+            const depth = -view.copy(point).applyMatrix4(camera.matrixWorldInverse).z;
+            if (depth < 150 || depth > 4000) return;
+            projected.copy(point).project(camera);
+            if (Math.abs(projected.x) > 1.05 || Math.abs(projected.y) > 1.05) return;
+            const x = (projected.x + 1) * width / 2, y = (1 - projected.y) * height / 2;
+            const radius = THREE.MathUtils.clamp(1600 / depth, 1, 3);
+            context.moveTo(x + radius, y);
+            context.arc(x, y, radius, 0, Math.PI * 2);
+          });
+          context.fill();
+        }
       };
       draw();
       dispose = () => {
@@ -106,7 +134,7 @@ export default function PortfolioRail() {
           object.element.removeAttribute('style');
           scene.remove(object); container.appendChild(object.element);
         });
-        dots.forEach(dot => { scene.remove(dot); dot.element.remove(); });
+        routeCanvas.remove();
         labels.domElement.remove();
         section.current?.classList.remove('rail-enabled');
       };
